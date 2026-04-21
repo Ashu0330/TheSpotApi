@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="ArtistHub.Api/ArtistHub.Api.csproj" Id="5b46c3a4-5689-445f-8e85-ed52be9efac7" />
+  <Project Path="ArtistHub.DAL/ArtistHub.DAL.csproj" />
+  <Project Path="ArtistHub.Domain/ArtistHub.Domain.csproj" />
+  <Project Path="ArtistHub.Presentation/ArtistHub.Presentation.csproj" />
+  <Project Path="ArtistHub.Repository/ArtistHub.Repository.csproj" />
+  <Project Path="ArtistHub.Services/ArtistHub.Services.csproj" />
+</Solution>
