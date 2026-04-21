@@ -20,7 +20,7 @@ namespace ArtistHub.API.Controllers
         [HttpGet]
         public async ValueTask<ApiResponse<TblArtist>> GetArtistByUserId(long userId) => await this.Service.GetArtistByUserId(userId);
         [HttpGet]
-        public async ValueTask<ApiResponse<IEnumerable<TblArtist>>> GetAllArtist() => await this.Service.GetAllArtist();
+        public async ValueTask<ApiResponse<IEnumerable<object>>> GetAllArtist() => await this.Service.GetAllArtist();
         [HttpPost]
         public async ValueTask<ApiResponse<IEnumerable<ArtistDto>>> GetArtistByCategory(ArtistExploreFilterModel model) => await this.Service.GetArtistByCategory(model);
         [HttpPost]
