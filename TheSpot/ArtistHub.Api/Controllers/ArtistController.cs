@@ -4,6 +4,7 @@ using ArtistHub.Presentation.Helper;
 using ArtistHub.Services.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static ArtistHub.Presentation.Domain.UserDto;
 
 namespace ArtistHub.API.Controllers
 {

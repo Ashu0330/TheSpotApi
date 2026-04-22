@@ -86,6 +86,8 @@ namespace ArtistHub.Services.Service
                     return new ApiResponse<UserDto>("Invalid Password", false, ResponseMessage.Error, null);
                 }
                 var role = (await this.uOW.GenricRepository<TblRoleMaster>().GetAllAsync(r => r.RoleId == user.RoleId)).FirstOrDefault() ?? new TblRoleMaster();
+                var artist = (await this.uOW.GenricRepository<TblArtist>().GetAllAsync(a => a.UserId == user.UserId)).FirstOrDefault();
+                var media = (await this.uOW.GenricRepository<TblArtistMedium>().GetAllAsync(m => m.ArtistId == artist.ArtistId)).FirstOrDefault();
                 var category = (await this.uOW.GenricRepository<CategoryMaster>().GetAllAsync(c => c.RoleId == role.RoleId)).FirstOrDefault() ?? new CategoryMaster();
                 var token = _jwt.GenerateToken(user.UserId, user.Email, role.RoleName);
                 var result = new UserDto
@@ -102,7 +104,8 @@ namespace ArtistHub.Services.Service
                     CreatedAt = user.CreatedAt,
                     UpdatedAt = user.UpdatedAt,
                     CategoryId = category.CategoryId,
-                    CategoryName = category.CategoryName
+                    CategoryName = category.CategoryName,
+                    ProfileImage = media?.MediaCategory == "Profile" ? media.FileUrl : null
 
                 };
                 return result != null ? new ApiResponse<UserDto>(Message.LoggedIn, true, ResponseMessage.Ok, result) :
@@ -113,7 +116,7 @@ namespace ArtistHub.Services.Service
                 return new ApiResponse<UserDto>(ex.Message, false, ResponseMessage.Error, new UserDto());
             }
         }
-     
+
 
     }
 }

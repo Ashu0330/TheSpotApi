@@ -26,4 +26,5 @@ public partial class TblUser
     public DateTime? UpdatedAt { get; set; }
 
     public bool? IsDeleted { get; set; }
+
 }

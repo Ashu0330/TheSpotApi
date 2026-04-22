@@ -4,6 +4,7 @@ using ArtistHub.Presentation.Helper;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static ArtistHub.Presentation.Domain.UserDto;
 
 namespace ArtistHub.Services.IService
 {

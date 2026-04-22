@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Text;
+using static ArtistHub.Presentation.Domain.UserDto;
 
 namespace ArtistHub.Services.Service
 {
@@ -100,7 +101,7 @@ namespace ArtistHub.Services.Service
 
             if (models.BannerImage != null)
             {
-                var bannerPath = this.imageHelper.UploadHighQualityImage(
+                var bannerPath = this.imageHelper.UploadMidQualityImage(
                     ImageDirectories.ArtistImages,
                     models.BannerImage);
 
@@ -149,7 +150,8 @@ namespace ArtistHub.Services.Service
             try
             {
                 long userid = Nameidentifier.GetUserId(_httpContext.HttpContext);
-                var result = await this.uOW.GenricRepository<TblArtistMedium>().GetAllAsync(filter:x=>x.ArtistId==userid);
+                var artistid = (await this.uOW.GenricRepository<TblArtist>().GetAllAsync(x => x.UserId == userid)).FirstOrDefault();
+                var result = await this.uOW.GenricRepository<TblArtistMedium>().GetAllAsync(filter:x=>x.ArtistId==artistId);
                 if (result.Any())
                 {
                    var data = result.Select(x =>

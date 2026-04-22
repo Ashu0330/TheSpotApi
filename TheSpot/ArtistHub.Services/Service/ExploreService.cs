@@ -22,7 +22,7 @@ namespace ArtistHub.Services.Service
         private readonly IRepositoryService<LoungeDto> LonRepository;
         private readonly IRepositoryService<EventDto> eveRepository;
         private readonly IHttpContextAccessor _httpContext;
-        public ExploreService(IUOW uOW, IRepositoryService<ArtistDto> artRepository, IRepositoryService<LoungeDto> LonRepository, 
+        public ExploreService(IUOW uOW, IRepositoryService<ArtistDto> artRepository, IRepositoryService<LoungeDto> LonRepository,
             IRepositoryService<EventDto> eveRepository, IHttpContextAccessor _httpcontext)
         {
             this.uOW = uOW;
@@ -37,7 +37,7 @@ namespace ArtistHub.Services.Service
         {
             try
             {
-                if (userId==0)
+                if (userId == 0)
                 {
                     userId = Nameidentifier.GetUserId(_httpContext.HttpContext);
                 }
@@ -54,6 +54,7 @@ namespace ArtistHub.Services.Service
         {
             try
             {
+                //a.isactive == true
                 var artist = await this.uOW.GenricRepository<TblArtist>().GetAllAsync(a => a.IsDeleted == false);
                 var user = await this.uOW.GenricRepository<TblUser>().GetAllAsync();
                 var media = await this.uOW.GenricRepository<TblArtistMedium>().GetAllAsync(a => a.IsDeleted == false);
@@ -68,14 +69,11 @@ namespace ArtistHub.Services.Service
                                  a.PricePerShow,
                                  a.Bio,
                                  a.Rating,
-
-                                 Media = mediaGroup
-                                         .GroupBy(x => x.MediaCategory) // 👈 IMPORTANT
-                                         .Select(g => new
-                                         {
-                                             Category = g.Key,
-                                             FileUrls = g.Select(x => x.FileUrl).ToList()
-                                         }).ToList()
+                                 Media = mediaGroup.GroupBy(x => x.MediaCategory).Select(g => new
+                         {
+                             Category = g.Key,
+                             FileUrls = g.Select(x => $"{ImageEnvironment.Baseurl}/{x.FileUrl}").ToList()
+                         }).ToList()
                              };
                 return result.Any() ? new ApiResponse<IEnumerable<object>>(Message.Retrieved, true, ResponseMessage.Ok, result) :
                                     new ApiResponse<IEnumerable<object>>(Message.NoRecord, true, ResponseMessage.NoRecords, null);
@@ -100,7 +98,7 @@ namespace ArtistHub.Services.Service
                 parameters.Add("@BookingDate", model.BookingDate);
                 parameters.Add("@SortBy", model.SortBy);
 
-                
+
                 var result = await this.AtrRepository.GetAllAsync(StoredProcedures.ExploreProcedure, parameters);
                 result.Select(x =>
                 {

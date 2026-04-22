@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.WebRequestMethods;
 
-namespace KFPLSkillUp.Presentation.Helper
-{
-    public class ImageEnvironment
-    {
-        public static string Baseurl => "https://localhost:7115";
 
-    }
+public class ImageEnvironment
+{
+#if DEBUG
+    public static string Baseurl => "https://localhost:7115/";
+
+
+#else
+        public static string Baseurl=> "https://musicapi.deftinstitute.in/";
+#endif
 }
+

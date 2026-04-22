@@ -83,14 +83,13 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-// ? Static Files
-//app.UseStaticFiles(new StaticFileOptions()
-//{
-//    FileProvider = new PhysicalFileProvider(
-//         Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
-//    RequestPath = new PathString("/wwwroot")
-//});
-//app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(
+         Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot")),
+    RequestPath = new PathString("/wwwroot")
+});
+app.UseStaticFiles();
 
 // ? Swagger only in Dev
 //if (app.Environment.IsDevelopment())

@@ -60,44 +60,48 @@ namespace ArtistHub.Presentation.Domain
         public DateTime? UpdatedAt { get; set; }
         public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
-    }
+        public string? ProfileImage
+        {
+            get; set;
+        }
 
-    public class ArtistSampltDto
-    {
-        public int Id { get; set; }
+        public class ArtistSampltDto
+        {
+            public int Id { get; set; }
 
-        public int ArtistId { get; set; }
+            public int ArtistId { get; set; }
 
-        public string Title { get; set; } = null!;
+            public string Title { get; set; } = null!;
 
-        public string Type { get; set; } = null!;
+            public string Type { get; set; } = null!;
 
-        public IFormFile File { get; set; } = null!;
-        public string? FileUrl { get; set; } = null!;
+            public IFormFile File { get; set; } = null!;
+            public string? FileUrl { get; set; } = null!;
 
-        public DateTime CreatedAt { get; set; }
-    }
-    public class ArtistMediaDto
-    {
-        public int ArtistMediaId { get; set; }
+            public DateTime CreatedAt { get; set; }
+        }
+        public class ArtistMediaDto
+        {
+            public int ArtistMediaId { get; set; }
 
-        public int ArtistId { get; set; }
+            public int ArtistId { get; set; }
 
-        public string? MediaCategory { get; set; }
+            public string? MediaCategory { get; set; }
 
-        public string? FileUrl { get; set; }
+            public string? FileUrl { get; set; }
 
-        public string? Title { get; set; }
+            public string? Title { get; set; }
 
-        public int? DisplayOrder { get; set; }
+            public int? DisplayOrder { get; set; }
 
-        public DateTime? CreatedAt { get; set; }
+            public DateTime? CreatedAt { get; set; }
 
-        public bool? IsDeleted { get; set; }
-        public IFormFile? ProfileImage { get; set; }
-        public IFormFile? BannerImage { get; set; }
-        public List<IFormFile>? ConcertImages { get; set; }
-        public string? YouTubelink { get; set; }
+            public bool? IsDeleted { get; set; }
+            public IFormFile? ProfileImage { get; set; }
+            public IFormFile? BannerImage { get; set; }
+            public List<IFormFile>? ConcertImages { get; set; }
+            public string? YouTubelink { get; set; }
+        }
     }
 }
 
