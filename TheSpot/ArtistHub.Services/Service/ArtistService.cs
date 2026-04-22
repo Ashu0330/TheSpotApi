@@ -46,7 +46,7 @@ namespace ArtistHub.Services.Service
                     var response = (await this.uOW.GenricRepository<TblArtist>().GetAllAsync(x => x.ArtistId == model.ArtistId)).FirstOrDefault();
                     if (response != null)
                     {
-                        var userid = Nameidentifier.GetUserId(_httpContext.HttpContext);
+                        var userid = model.UserId;
                         response.ArtistId = model.ArtistId;
                         response.UserId = (long)userid;
                         response.Bio = model.Bio;
