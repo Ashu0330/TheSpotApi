@@ -50,17 +50,39 @@ namespace ArtistHub.Services.Service
                 return new ApiResponse<TblArtist>(ex.Message, false, ResponseMessage.Error, null);
             }
         }
-        public async ValueTask<ApiResponse<IEnumerable<TblArtist>>> GetAllArtist()
+        public async ValueTask<ApiResponse<IEnumerable<object>>> GetAllArtist()
         {
             try
             {
-                var result = await this.uOW.GenricRepository<TblArtist>().GetAllAsync(x => x.IsDeleted == false);
-                return result.Any() ? new ApiResponse<IEnumerable<TblArtist>>(Message.Retrieved, true, ResponseMessage.Ok, result) :
-                                    new ApiResponse<IEnumerable<TblArtist>>(Message.NoRecord, true, ResponseMessage.NoRecords, null);
+                var artist = await this.uOW.GenricRepository<TblArtist>().GetAllAsync(a => a.IsDeleted == false);
+                var user = await this.uOW.GenricRepository<TblUser>().GetAllAsync();
+                var media = await this.uOW.GenricRepository<TblArtistMedium>().GetAllAsync(a => a.IsDeleted == false);
+                var result = from a in artist
+                             join u in user on a.UserId equals u.UserId
+                             join m in media on a.ArtistId equals m.ArtistId into mediaGroup
+                             select new
+                             {
+                                 a.ArtistId,
+                                 a.UserId,
+                                 u.FullName,
+                                 a.PricePerShow,
+                                 a.Bio,
+                                 a.Rating,
+
+                                 Media = mediaGroup
+                                         .GroupBy(x => x.MediaCategory) // 👈 IMPORTANT
+                                         .Select(g => new
+                                         {
+                                             Category = g.Key,
+                                             FileUrls = g.Select(x => x.FileUrl).ToList()
+                                         }).ToList()
+                             };
+                return result.Any() ? new ApiResponse<IEnumerable<object>>(Message.Retrieved, true, ResponseMessage.Ok, result) :
+                                    new ApiResponse<IEnumerable<object>>(Message.NoRecord, true, ResponseMessage.NoRecords, null);
             }
             catch (Exception ex)
             {
-                return new ApiResponse<IEnumerable<TblArtist>>(ex.Message, false, ResponseMessage.Error, null);
+                return new ApiResponse<IEnumerable<object>>(ex.Message, false, ResponseMessage.Error, null);
             }
         }
         public async ValueTask<ApiResponse<IEnumerable<ArtistDto>>> GetArtistByCategory(ArtistExploreFilterModel model)
