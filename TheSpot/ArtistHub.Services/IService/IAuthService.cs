@@ -10,7 +10,7 @@ namespace ArtistHub.Services.IService
     public interface IAuthService
     {
         ValueTask<ApiResponse<UserDto>> LoginUser(LoginRequestDto model);
-        ValueTask<ApiResponse<long>> RegisterUser(TblUser model);
+        ValueTask<ApiResponse<long>> RegisterUser(UserDto model);
 
 
     }

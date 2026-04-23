@@ -73,7 +73,7 @@ public class ImageHelper
         return UploadImageWithQuality(folderName, file, ImageQuality.Medium);
     }
 
-    public string UploadLowQualityImage(string folderName, IFormFile file)
+    public string UploadLowQualityImage(string folderName, IFormFile? file)
     {
         return UploadImageWithQuality(folderName, file, ImageQuality.Low);
     }

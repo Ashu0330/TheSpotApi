@@ -5,6 +5,7 @@ using ArtistHub.Presentation.Helper;
 using ArtistHub.Services.IService;
 using Dapper;
 using KFPLSkillUp.Presentation.Helper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,50 +18,90 @@ namespace ArtistHub.Services.Service
     {
         private readonly IUOW uOW;
         private readonly JwtHelper _jwt;
+        private readonly ImageHelper imageHelper;
 
 
 
-        public AuthService(IUOW uOW, JwtHelper _jwt)
+        public AuthService(IUOW uOW, JwtHelper _jwt, ImageHelper imageHelper)
         {
             this.uOW = uOW;
             this._jwt = _jwt;
+            this.imageHelper = imageHelper;
         }
-
-        public async ValueTask<ApiResponse<long>> RegisterUser(TblUser model)
+        public async ValueTask<ApiResponse<long>> RegisterUser(UserDto model)
         {
             try
             {
-                if (model.RoleId == (int)RoleEnum.Admin || model.FullName == RoleMaster.Admin)
+                if (model.RoleId == (int)RoleEnum.Admin)
                 {
                     return new ApiResponse<long>(Message.Invalid, false, ResponseMessage.Error, 0);
                 }
 
-                if (model.UserId != 0)
+                // 👉 CREATE
+                if (model.UserId == 0)
                 {
-                    var response = (await this.uOW.GenricRepository<TblUser>().GetAllAsync(x => x.UserId == model.UserId)).FirstOrDefault();
-                    if (response != null)
-                    {
-                        var existing = (await uOW.GenricRepository<TblUser>().GetAllAsync(x => x.Email == model.Email || x.Phone == model.Phone)).FirstOrDefault();
+                    var existing = (await uOW.GenricRepository<TblUser>()
+                        .GetAllAsync(x => x.Email == model.Email || x.Phone == model.Phone))
+                        .FirstOrDefault();
 
-                        if (existing != null)
-                            return new ApiResponse<long>("Email already exists", false, ResponseMessage.Error, model.UserId);
-                        response.FullName = model.FullName;
-                        response.Email = model.Email;
-                        response.Phone = model.Phone;
-                        response.RoleId = model.RoleId;
-                        response.City = model.City;
-                        response.UpdatedAt = model.UpdatedAt;
-                        this.uOW.GenricRepository<TblUser>().Update(response);
-                    }
+                    if (existing != null)
+                        return new ApiResponse<long>("Email or Phone already exists", false, ResponseMessage.Error, 0);
+
+                    var entity = new TblUser
+                    {
+                        FullName = model.FullName,
+                        Email = model.Email,
+                        Phone = model.Phone,
+                        RoleId = model.RoleId,
+                        City = model.City,
+                        PasswordHash = PasswordHasher.HashPassword(model?.PasswordHash ?? string.Empty), // ✅ FIXED
+                        CreatedAt = DateTime.UtcNow,
+                        ProfileImage = imageHelper.UploadLowQualityImage(
+                            ImageDirectories.ProfileImages, model?.Profilefile)
+                    };
+
+                    await uOW.GenricRepository<TblUser>().AddAsync(entity);
+                    await uOW.SaveAsync();
+
+                    return new ApiResponse<long>(Message.Saved, true, ResponseMessage.Ok, entity.UserId);
                 }
+
+                // 👉 UPDATE
                 else
                 {
-                    var existing = (await uOW.GenricRepository<TblUser>().GetAllAsync(x => x.Email == model.Email || x.Phone == model.Phone)).FirstOrDefault();
-                    model.PasswordHash = PasswordHasher.HashPassword(model.PasswordHash);
-                    await this.uOW.GenricRepository<TblUser>().AddAsync(model);
+                    var user = (await uOW.GenricRepository<TblUser>()
+                        .GetAllAsync(x => x.UserId == model.UserId))
+                        .FirstOrDefault();
+
+                    if (user == null)
+                        return new ApiResponse<long>("User not found", false, ResponseMessage.Error, 0);
+
+                    var existing = (await uOW.GenricRepository<TblUser>()
+                        .GetAllAsync(x => (x.Email == model.Email || x.Phone == model.Phone)
+                                          && x.UserId != model.UserId))
+                        .FirstOrDefault();
+
+                    if (existing != null)
+                        return new ApiResponse<long>("Email or Phone already exists", false, ResponseMessage.Error, model.UserId);
+
+                    user.FullName = model.FullName;
+                    user.Email = model.Email;
+                    user.Phone = model.Phone;
+                    user.RoleId = model.RoleId;
+                    user.City = model.City;
+                    user.UpdatedAt = DateTime.UtcNow;
+
+                    if (model?.Profilefile != null)
+                    {
+                        user.ProfileImage = imageHelper.UploadLowQualityImage(
+                            ImageDirectories.ProfileImages, model.Profilefile);
+                    }
+
+                    uOW.GenricRepository<TblUser>().Update(user);
+                    await uOW.SaveAsync();
+
+                    return new ApiResponse<long>(Message.Updated, true, ResponseMessage.Ok, user.UserId);
                 }
-                await this.uOW.SaveAsync();
-                return new ApiResponse<long>(model.UserId != 0 ? Message.Saved : Message.Updated, true, ResponseMessage.Ok, model.UserId);
             }
             catch (Exception ex)
             {
@@ -86,8 +127,6 @@ namespace ArtistHub.Services.Service
                     return new ApiResponse<UserDto>("Invalid Password", false, ResponseMessage.Error, null);
                 }
                 var role = (await this.uOW.GenricRepository<TblRoleMaster>().GetAllAsync(r => r.RoleId == user.RoleId)).FirstOrDefault() ?? new TblRoleMaster();
-                var artist = (await this.uOW.GenricRepository<TblArtist>().GetAllAsync(a => a.UserId == user.UserId)).FirstOrDefault();
-                var media = (await this.uOW.GenricRepository<TblArtistMedium>().GetAllAsync(m => m.ArtistId == artist.ArtistId)).FirstOrDefault();
                 var category = (await this.uOW.GenricRepository<CategoryMaster>().GetAllAsync(c => c.RoleId == role.RoleId)).FirstOrDefault() ?? new CategoryMaster();
                 var token = _jwt.GenerateToken(user.UserId, user.Email, role.RoleName);
                 var result = new UserDto
@@ -105,7 +144,7 @@ namespace ArtistHub.Services.Service
                     UpdatedAt = user.UpdatedAt,
                     CategoryId = category.CategoryId,
                     CategoryName = category.CategoryName,
-                    ProfileImage = media?.MediaCategory == "Profile" ? media.FileUrl : null
+                    ProfileImage = ImageEnvironment.Baseurl + user.ProfileImage
 
                 };
                 return result != null ? new ApiResponse<UserDto>(Message.LoggedIn, true, ResponseMessage.Ok, result) :

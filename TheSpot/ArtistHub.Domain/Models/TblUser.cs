@@ -27,4 +27,5 @@ public partial class TblUser
 
     public bool? IsDeleted { get; set; }
 
+    public string? ProfileImage { get; set; }
 }

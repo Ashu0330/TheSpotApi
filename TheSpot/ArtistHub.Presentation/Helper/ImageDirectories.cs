@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 public class ImageDirectories
 {
     public static string ArtistImages = "ArtistImages";
+    public static string ProfileImages = "ProfileImages";
 
 }
 

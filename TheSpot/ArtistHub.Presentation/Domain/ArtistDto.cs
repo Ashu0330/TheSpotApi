@@ -60,10 +60,8 @@ namespace ArtistHub.Presentation.Domain
         public DateTime? UpdatedAt { get; set; }
         public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
-        public string? ProfileImage
-        {
-            get; set;
-        }
+        public string? ProfileImage { get; set; }
+        public IFormFile? Profilefile { get; set; }
 
         public class ArtistSampltDto
         {

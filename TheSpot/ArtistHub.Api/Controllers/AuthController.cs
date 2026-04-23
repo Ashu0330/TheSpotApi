@@ -23,6 +23,6 @@ namespace ArtistHub.API.Controllers
         public async ValueTask<ApiResponse<UserDto>> LoginUser(LoginRequestDto model) => await this._authService.LoginUser(model);
 
         [HttpPost]
-        public async ValueTask<ApiResponse<long>> RegisterUser(TblUser model) => await this._authService.RegisterUser(model);
+        public async ValueTask<ApiResponse<long>> RegisterUser(UserDto model) => await this._authService.RegisterUser(model);
     }
 }
