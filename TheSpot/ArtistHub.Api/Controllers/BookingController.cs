@@ -9,7 +9,7 @@ namespace ArtistHub.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles = RoleMaster.UserOrLounge)]
+    //[Authorize(Roles = RoleMaster.UserOrLounge)]
     public class BookingController : ControllerBase
     {
         private readonly IBookingService service;

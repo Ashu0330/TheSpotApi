@@ -9,7 +9,7 @@ using static ArtistHub.Presentation.Domain.UserDto;
 namespace ArtistHub.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
-    [Authorize(Roles = RoleMaster.Artist)]
+    //[Authorize(Roles = RoleMaster.Artist)]
     [ApiController]
     public class ArtistController : ControllerBase
     {

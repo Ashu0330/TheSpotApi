@@ -12,7 +12,7 @@ namespace ArtistHub.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [Authorize]
-    [ApiController]
+    //[ApiController]
     public class UserController : ControllerBase
     {
         private readonly IUserService userService;

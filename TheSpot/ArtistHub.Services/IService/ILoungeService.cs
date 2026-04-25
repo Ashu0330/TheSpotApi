@@ -12,5 +12,6 @@ namespace ArtistHub.Services.IService
         ValueTask<ApiResponse<bool>> CreateLongue(TblLounge model);
         ValueTask<ApiResponse<bool>> CreateEvent(TblEvent model);
         ValueTask<ApiResponse<IEnumerable<TblEvent>>> GetAllEvent(filterModel model);
+        ValueTask<ApiResponse<IEnumerable<TblLounge>>> GetAllLounges();
     }
 }

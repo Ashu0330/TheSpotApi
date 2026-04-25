@@ -69,7 +69,7 @@ namespace ArtistHub.Services.Service
                         response.EndTime = model.EndTime;
                         response.TicketPrice = model.TicketPrice;
                         response.TotalSeats = model.TotalSeats;
-                        response.AvailableSeats = model.AvailableSeats;
+                        //response.AvailableSeats = model.AvailableSeats;
                         response.Status = model.Status;
                         this.uOW.GenricRepository<TblEvent>().Update(response);
                     }

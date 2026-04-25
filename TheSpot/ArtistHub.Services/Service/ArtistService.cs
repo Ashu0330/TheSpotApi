@@ -183,7 +183,7 @@ namespace ArtistHub.Services.Service
                 {
                     response = await uOW.GenricRepository<TblBooking>()
                         .GetAllAsync(x =>
-                            x.ArtistId == id &&
+                            x.ArtistId == model.ArtistId &&
                             (string.IsNullOrEmpty(model.Status) || x.Status == model.Status));
                 }
                 else

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ArtistHub.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
-    [Authorize(Roles = "Lounge")]
+    //[Authorize(Roles = "Lounge")]
     [ApiController]
     public class LoungeController : ControllerBase
     {
@@ -23,6 +23,8 @@ namespace ArtistHub.API.Controllers
         public async ValueTask<ApiResponse<bool>> CreateLongue(TblLounge model) => await this.service.CreateLongue(model);
         [HttpPost]
         public async ValueTask<ApiResponse<bool>> CreateEvent(TblEvent model) => await this.service.CreateEvent(model);
+        [HttpGet]
+        public async ValueTask<ApiResponse<IEnumerable<TblLounge>>> GetAllLounges()=>await this.service.GetAllLounges();
 
         [HttpPost]
         public async ValueTask<ApiResponse<IEnumerable<TblEvent>>> GetAllEvent(filterModel model) => await this.service.GetAllEvent(model);

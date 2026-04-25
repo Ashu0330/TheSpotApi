@@ -13,7 +13,7 @@ namespace ArtistHub.API.Controllers
 {
     [Route("api/[controller]/[Action]")]
     [ApiController]
-    [Authorize(Roles = RoleMaster.Admin)]
+    //[Authorize(Roles = RoleMaster.Admin)]
     public class MasterController : ControllerBase
     {
 
